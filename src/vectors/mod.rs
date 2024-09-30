@@ -1,6 +1,6 @@
-pub mod vecn;
-
 use num::cast::AsPrimitive;
+
+pub mod vecn;
 
 pub(in crate::vectors) mod private {
     pub trait Seal {}
