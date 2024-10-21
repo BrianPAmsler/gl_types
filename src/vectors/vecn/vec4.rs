@@ -1,80 +1,35 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign}};
 
 use multi_impl::multi_impl;
+use nalgebra::Vector4;
 
 use crate::vectors::{private::Seal, GLScalar};
 
 use super::{Vec2, Vec3, VecN};
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
-pub struct Vec4 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32
-}
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
+pub struct Vec4(pub(in super) Vector4<f32>);
 
-impl Seal for Vec4 {}
-
-pub trait Constructor4<T>: Seal {
-    fn new(args: T) -> Vec4;
-}
-
-impl<A: GLScalar, B: GLScalar, C: GLScalar, D: GLScalar> Constructor4<(A, B, C, D)> for Vec4 {
-    fn new(args: (A, B, C, D)) -> Vec4 {
-        let (a, b, c, d) = args;
-        Vec4 { x: a.as_(), y: b.as_(), z: c.as_(), w: d.as_() }
+impl Debug for Vec4 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
     }
 }
 
-impl<B: GLScalar, C: GLScalar> Constructor4<(Vec2, B, C)> for Vec4 {
-    fn new(args: (Vec2, B, C)) -> Vec4 {
-        let (a, b, c) = args;
-        Vec4 { x: a.x, y: a.y, z: b.as_(), w: c.as_() }
+impl Vec4 {
+    pub fn _new(x: f32, y: f32, z: f32, w: f32) -> Self {
+        Self(Vector4::new(x, y, z, w))
     }
 }
-
-impl<A: GLScalar, C: GLScalar> Constructor4<(A, Vec2, C)> for Vec4 {
-    fn new(args: (A, Vec2, C)) -> Vec4 {
-        let (a, b, c) = args;
-        Vec4 { x: a.as_(), y: b.x, z: b.y, w: c.as_() }
-    }
-}
-
-impl<A: GLScalar, B: GLScalar> Constructor4<(A, B, Vec2)> for Vec4 {
-    fn new(args: (A, B, Vec2)) -> Vec4 {
-        let (a, b, c) = args;
-        Vec4 { x: a.as_(), y: b.as_(), z: c.x, w: c.y }
-    }
-}
-
-impl<B: GLScalar> Constructor4<(Vec3, B)> for Vec4 {
-    fn new(args: (Vec3, B)) -> Vec4 {
-        let (a, b) = args;
-        Vec4 { x: a.x, y: a.y, z: a.z, w: b.as_() }
-    }
-}
-
-impl<A: GLScalar> Constructor4<(A, Vec3)> for Vec4 {
-    fn new(args: (A, Vec3)) -> Vec4 {
-        let (a, b) = args;
-        Vec4 { x: a.as_(), y: b.x, z: b.y, w: b.z }
-    }
-}
-
-impl Constructor4<(Vec2, Vec2)> for Vec4 {
-    fn new(args: (Vec2, Vec2)) -> Vec4 {
-        let (a, b) = args;
-        Vec4 { x: a.x, y: a.y, z: b.x, w: b.y }
-    }
-}
-
-impl<A: GLScalar> Constructor4<A> for Vec4 {
-    fn new(args: A) -> Vec4 {
-        Vec4 { x: args.as_(), y: args.as_(), z: args.as_(), w: args.as_() }
-    }
-}
+// #[repr(C)]
+// #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+// pub struct Vec4 {
+//     pub x: f32,
+//     pub y: f32,
+//     pub z: f32,
+//     pub w: f32
+// }
 
 // Vector-Vector Operators
 
@@ -82,7 +37,7 @@ impl Add for Vec4 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self { x: self.x + rhs.x, y: self.y + rhs.y, z: self.z + rhs.z, w: self.w + rhs.w }
+        Self(self.0 + rhs.0)
     }
 }
 
@@ -90,7 +45,7 @@ impl Sub for Vec4 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self { x: self.x - rhs.x, y: self.y - rhs.y, z: self.z - rhs.z, w: self.w - rhs.w }
+        Self(self.0 - rhs.0)
     }
 }
 
@@ -98,7 +53,7 @@ impl Mul for Vec4 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self { x: self.x * rhs.x, y: self.y * rhs.y, z: self.z * rhs.z, w: self.w * rhs.w }
+        Self(self.0.component_mul(&rhs.0))
     }
 }
 
@@ -106,97 +61,69 @@ impl Div for Vec4 {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        Self { x: self.x / rhs.x, y: self.y / rhs.y, z: self.z / rhs.z, w: self.w / rhs.w }
+        Self(self.0.component_div(&rhs.0))
     }
 }
 
 impl AddAssign for Vec4 {
     fn add_assign(&mut self, rhs: Self) {
-        self.x += rhs.x;
-        self.y += rhs.y;
-        self.z += rhs.z;
-        self.w += rhs.w;
+        self.0 += rhs.0;
     }
 }
 
 impl SubAssign for Vec4 {
     fn sub_assign(&mut self, rhs: Self) {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
-        self.z -= rhs.z;
-        self.w -= rhs.w;
+        self.0 -= rhs.0;
     }
 }
 
 impl MulAssign for Vec4 {
     fn mul_assign(&mut self, rhs: Self) {
-        self.x *= rhs.x;
-        self.y *= rhs.y;
-        self.z *= rhs.z;
-        self.w *= rhs.w;
+        self.0.component_mul_assign(&rhs.0);
     }
 }
 
 impl DivAssign for Vec4 {
     fn div_assign(&mut self, rhs: Self) {
-        self.x /= rhs.x;
-        self.y /= rhs.y;
-        self.z /= rhs.z;
-        self.w /= rhs.w;
+        self.0.component_div_assign(&rhs.0);
     }
 }
 
 // Scalar-Vector Operators
 
 impl<T: GLScalar> Add<T> for Vec4 {
-    type Output = Vec4;
+    type Output = Self;
 
-    fn add(mut self, rhs: T) -> Self::Output {
+    fn add(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x += rhs;
-        self.y += rhs;
-        self.z += rhs;
-        self.w += rhs;
-        self
+        Self(self.0.add_scalar(rhs))
     }
 }
 
 impl<T: GLScalar> Sub<T> for Vec4 {
-    type Output = Vec4;
+    type Output = Self;
 
-    fn sub(mut self, rhs: T) -> Self::Output {
+    fn sub(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x -= rhs;
-        self.y -= rhs;
-        self.z -= rhs;
-        self.w -= rhs;
-        self
+        Self(self.0.add_scalar(-rhs))
     }
 }
 
 impl<T: GLScalar> Mul<T> for Vec4 {
-    type Output = Vec4;
+    type Output = Self;
 
-    fn mul(mut self, rhs: T) -> Self::Output {
+    fn mul(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x *= rhs;
-        self.y *= rhs;
-        self.z *= rhs;
-        self.w *= rhs;
-        self
+        Self(self.0 * rhs)
     }
 }
 
 impl<T: GLScalar> Div<T> for Vec4 {
-    type Output = Vec4;
+    type Output = Self;
 
-    fn div(mut self, rhs: T) -> Self::Output {
+    fn div(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x /= rhs;
-        self.y /= rhs;
-        self.z /= rhs;
-        self.w /= rhs;
-        self
+        Self(self.0 / rhs)
     }
 }
 
@@ -234,7 +161,11 @@ multi_impl! (Div<Vec4> for (i32, u32, i64, u64, f32, f64) {
 
 impl VecN<4> for Vec4 {
     fn as_array(self) -> [f32; 4] {
-        unsafe { std::mem::transmute(self) }
+        [self.0[0], self.0[1], self.0[2], self.0[3]]
+    }
+
+    fn from_array(array: [f32; 4]) -> Self {
+        Self::_new(array[0], array[1], array[2], array[3])
     }
 
     fn as_slice(&self) -> &[f32; 4] {
@@ -245,12 +176,69 @@ impl VecN<4> for Vec4 {
         unsafe { std::mem::transmute(self) }
     }
 
-    fn from_array(array: [f32; 4]) -> Self {
-        unsafe { std::mem::transmute(array) }
-    }
-
     fn from_slice(slice: &[f32; 4]) -> Self {
-        Self { x: slice[0], y: slice[1], z: slice[2], w: slice[3] }
+        Self::_new(slice[0], slice[1], slice[2], slice[3])
+    }
+}
+
+impl Seal for Vec4 {}
+
+pub trait Constructor4<T>: Seal {
+    fn new(args: T) -> Vec4;
+}
+
+impl<A: GLScalar, B: GLScalar, C: GLScalar, D: GLScalar> Constructor4<(A, B, C, D)> for Vec4 {
+    fn new(args: (A, B, C, D)) -> Vec4 {
+        let (a, b, c, d) = args;
+        Vec4::_new(a.as_(), b.as_(), c.as_(), d.as_())
+    }
+}
+
+impl<B: GLScalar, C: GLScalar> Constructor4<(Vec2, B, C)> for Vec4 {
+    fn new(args: (Vec2, B, C)) -> Vec4 {
+        let (a, b, c) = args;
+        Self::_new(a.x(), a.y(), b.as_(), c.as_())
+    }
+}
+
+impl<A: GLScalar, C: GLScalar> Constructor4<(A, Vec2, C)> for Vec4 {
+    fn new(args: (A, Vec2, C)) -> Vec4 {
+        let (a, b, c) = args;
+        Self::_new(a.as_(), b.x(), b.y(), c.as_())
+    }
+}
+
+impl<A: GLScalar, B: GLScalar> Constructor4<(A, B, Vec2)> for Vec4 {
+    fn new(args: (A, B, Vec2)) -> Vec4 {
+        let (a, b, c) = args;
+        Self::_new(a.as_(), b.as_(), c.x(), c.y())
+    }
+}
+
+impl<B: GLScalar> Constructor4<(Vec3, B)> for Vec4 {
+    fn new(args: (Vec3, B)) -> Vec4 {
+        let (a, b) = args;
+        Self::_new(a.x(), a.y(), a.z(), b.as_())
+    }
+}
+
+impl<A: GLScalar> Constructor4<(A, Vec3)> for Vec4 {
+    fn new(args: (A, Vec3)) -> Vec4 {
+        let (a, b) = args;
+        Self::_new(a.as_(), b.x(), b.y(), b.z())
+    }
+}
+
+impl Constructor4<(Vec2, Vec2)> for Vec4 {
+    fn new(args: (Vec2, Vec2)) -> Vec4 {
+        let (a, b) = args;
+        Self::_new(a.x(), a.y(), b.x(), b.y())
+    }
+}
+
+impl<A: GLScalar> Constructor4<A> for Vec4 {
+    fn new(args: A) -> Vec4 {
+        Self::_new( args.as_(), args.as_(), args.as_(), args.as_())
     }
 }
 

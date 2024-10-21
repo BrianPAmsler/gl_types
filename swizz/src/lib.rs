@@ -56,7 +56,7 @@ pub fn generate_swizzles(item: TokenStream) -> TokenStream {
                 fns.push(
                     quote! {
                         pub fn #name(&self) -> #vecn {
-                            #vecn::new_(#constructor)
+                            #vecn::_new(#constructor)
                         }
                 });
             } else {
