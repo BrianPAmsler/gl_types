@@ -1,23 +1,33 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 use multi_impl::multi_impl;
+use nalgebra::Vector2;
 
 use crate::vectors::{private::Seal, GLScalar};
 
 use super::VecN;
 
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
+pub struct Vec2(Vector2<f32>);
+
+impl Vec2 {
+    fn _new(x: f32, y: f32) -> Vec2 {
+        Self(Vector2::new(x, y))
+    }
 }
+
+// #[repr(C)]
+// #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+// pub struct Vec2 {
+//     pub x: f32,
+//     pub y: f32
+// }
 
 impl Add for Vec2 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self { x: self.x + rhs.x, y: self.y + rhs.y }
+        Self(self.0 + rhs.0)
     }
 }
 
@@ -25,7 +35,7 @@ impl Sub for Vec2 {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        Self { x: self.x - rhs.x, y: self.y - rhs.y }
+        Self(self.0 - rhs.0)
     }
 }
 
@@ -33,7 +43,7 @@ impl Mul for Vec2 {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self { x: self.x * rhs.x, y: self.y * rhs.y }
+        Self(self.0.component_mul(&rhs.0))
     }
 }
 
@@ -41,35 +51,31 @@ impl Div for Vec2 {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self::Output {
-        Self { x: self.x / rhs.x, y: self.y / rhs.y }
+        Self(self.0.component_div(&rhs.0))
     }
 }
 
 impl AddAssign for Vec2 {
     fn add_assign(&mut self, rhs: Self) {
-        self.x += rhs.x;
-        self.y += rhs.y;
+        self.0 += rhs.0;
     }
 }
 
 impl SubAssign for Vec2 {
     fn sub_assign(&mut self, rhs: Self) {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
+        self.0 -= rhs.0;
     }
 }
 
 impl MulAssign for Vec2 {
     fn mul_assign(&mut self, rhs: Self) {
-        self.x *= rhs.x;
-        self.y *= rhs.y;
+        self.0.component_mul_assign(&rhs.0);
     }
 }
 
 impl DivAssign for Vec2 {
     fn div_assign(&mut self, rhs: Self) {
-        self.x /= rhs.x;
-        self.y /= rhs.y;
+        self.0.component_mul_assign(&rhs.0);
     }
 }
 
@@ -78,44 +84,36 @@ impl DivAssign for Vec2 {
 impl<T: GLScalar> Add<T> for Vec2 {
     type Output = Vec2;
 
-    fn add(mut self, rhs: T) -> Self::Output {
+    fn add(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x += rhs;
-        self.y += rhs;
-        self
+        Self(self.0.add_scalar(rhs))
     }
 }
 
 impl<T: GLScalar> Sub<T> for Vec2 {
     type Output = Vec2;
 
-    fn sub(mut self, rhs: T) -> Self::Output {
+    fn sub(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x -= rhs;
-        self.y -= rhs;
-        self
+        Self(self.0.add_scalar(-rhs))
     }
 }
 
 impl<T: GLScalar> Mul<T> for Vec2 {
     type Output = Vec2;
 
-    fn mul(mut self, rhs: T) -> Self::Output {
+    fn mul(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x *= rhs;
-        self.y *= rhs;
-        self
+        Self(self.0 * rhs)
     }
 }
 
 impl<T: GLScalar> Div<T> for Vec2 {
     type Output = Vec2;
 
-    fn div(mut self, rhs: T) -> Self::Output {
+    fn div(self, rhs: T) -> Self::Output {
         let rhs: f32 = rhs.as_();
-        self.x /= rhs;
-        self.y /= rhs;
-        self
+        Self(self.0 / rhs)
     }
 }
 
@@ -147,15 +145,7 @@ impl Seal for Vec2 {}
 
 impl VecN<2> for Vec2 {
     fn as_array(self) -> [f32; 2] {
-        unsafe { std::mem::transmute(self) }
-    }
-
-    fn as_slice(&self) -> &[f32; 2] {
-        unsafe { std::mem::transmute(self) }
-    }
-
-    fn as_slice_mut(&mut self) -> &mut [f32; 2] {
-        unsafe { std::mem::transmute(self) }
+        [self.0[0], self.0[1]]
     }
 
     fn from_array(array: [f32; 2]) -> Self {
@@ -163,7 +153,7 @@ impl VecN<2> for Vec2 {
     }
 
     fn from_slice(slice: &[f32; 2]) -> Self {
-        Self { x: slice[0], y: slice[1] }
+        Self::new((slice[0], slice[1]))
     }
 }
 
@@ -174,13 +164,13 @@ pub trait Constructor2<T>: Seal {
 impl<A: GLScalar, B: GLScalar> Constructor2<(A, B)> for Vec2 {
     fn new(args: (A, B)) -> Vec2 {
         let (a, b) = args;
-        Vec2 { x: a.as_(), y: b.as_() }
+        Self::_new(a.as_(), b.as_())
     }
 }
 
 impl<A: GLScalar> Constructor2<A> for Vec2 {
     fn new(args: A) -> Vec2 {
-        Vec2 { x: args.as_(), y: args.as_() }
+        Self::_new(args.as_(), args.as_())
     }
 }
 

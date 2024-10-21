@@ -12,4 +12,7 @@ multi_impl!(AsFloat for (u32, i32, u64, i64, f64, f32) {
 
 #[test] 
 fn test() {
+    let float = 5.as_float();
+
+    assert_eq!(float, 5.0);
 }

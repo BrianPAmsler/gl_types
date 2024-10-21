@@ -190,14 +190,6 @@ impl VecN<3> for Vec3 {
         unsafe { std::mem::transmute(self) }
     }
 
-    fn as_slice(&self) -> &[f32; 3] {
-        unsafe { std::mem::transmute(self) }
-    }
-
-    fn as_slice_mut(&mut self) -> &mut [f32; 3] {
-        unsafe { std::mem::transmute(self) }
-    }
-
     fn from_array(array: [f32; 3]) -> Self {
         unsafe { std::mem::transmute(array) }
     }
