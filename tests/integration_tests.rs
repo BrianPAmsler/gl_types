@@ -1,4 +1,7 @@
-use gl_types::{vec2, vec3, vec4, vectors::vecn::{Vec2, Vec3, Vec4, VecN}};
+use std::time::{Duration, Instant};
+
+use gl_types::{matrices::{mul1, mul2, mul3, Mat, Mat4, Mat4Constructor}, vec2, vec3, vec4, vectors::vecn::{Vec2, Vec3, Vec4, VecN}};
+use num::Zero;
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -274,4 +277,60 @@ pub fn division() {
         a /= b;
         assert_eq!(a, c);
     }
+}
+
+#[test]
+pub fn transpose() {
+    let a = Mat4::new((vec4!(1, 2, 3, 4), vec4!(5, 6, 7, 8), vec4!(9, 10, 11, 12), vec4!(13, 14, 15, 16)));
+    let b = Mat4::new((vec4!(1, 5, 9, 13), vec4!(2, 6, 10, 14), vec4!(3, 7, 11, 15), vec4!(4, 8, 12, 16))).transpose();
+
+    assert_eq!(a, b);
+}
+
+const TIMES: u32 = 10000000;
+
+#[test]
+pub fn timing() {
+    let mut t1 = Duration::ZERO;
+    let mut t2 = Duration::ZERO;
+    let mut t3 = Duration::ZERO;
+    let mut t4 = Duration::ZERO;
+    let arr_a = rand_array();
+    let arr_b = rand_array();
+    let a1 = Mat4::from_array(arr_a);
+    let b1 = Mat4::from_array(arr_b);
+    let a2 = Mat4::from_array(arr_a);
+    let b2 = Mat4::from_array(arr_b);
+    let a3 = Mat4::from_array(arr_a);
+    let b3 = Mat4::from_array(arr_b);
+    let mut a4 = glm::Mat4::zero();
+    let mut b4 = glm::Mat4::zero();
+
+    for c in 0..4 {
+        for r in 0..4 {
+            a4[c][r] = a1[c][r];
+            b4[c][r] = b1[c][r];
+        }
+    }
+
+    for _ in 0..TIMES {
+
+        let start = Instant::now();
+        let c1 = mul1(a1, b1);
+        t1 += Instant::now() - start;
+        
+        let start = Instant::now();
+        let c2 = mul2(a2, b2);
+        t2 += Instant::now() - start;
+        
+        let start = Instant::now();
+        let c3 = mul3(a3, b3);
+        t3 += Instant::now() - start;
+
+        let start = Instant::now();
+        let c4 = a4.clone() * b4.clone();
+        t4 += Instant::now() - start;
+    }
+
+    panic!("mul1: {}, mul2: {}, mul3: {}, glm: {}", t1.as_millis(), t2.as_millis(), t3.as_millis(), t4.as_millis());
 }

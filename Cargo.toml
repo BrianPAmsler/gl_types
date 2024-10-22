@@ -12,3 +12,4 @@ multi-impl = {path = "./multi-impl"}
 
 [dev-dependencies]
 rand = "0.8.5"
+glm = "0.2.3"
