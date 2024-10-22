@@ -49,62 +49,74 @@ impl VecN<4> for Vec4 {
 
 impl Seal for Vec4 {}
 
-pub trait Constructor4<T>: Seal {
+pub trait Vec4Constructor<T>: Seal {
     fn new(args: T) -> Vec4;
 }
 
-impl<A: GLScalar, B: GLScalar, C: GLScalar, D: GLScalar> Constructor4<(A, B, C, D)> for Vec4 {
+impl<A: GLScalar, B: GLScalar, C: GLScalar, D: GLScalar> Vec4Constructor<(A, B, C, D)> for Vec4 {
     fn new(args: (A, B, C, D)) -> Vec4 {
         let (a, b, c, d) = args;
         Vec4::_new(a.as_(), b.as_(), c.as_(), d.as_())
     }
 }
 
-impl<B: GLScalar, C: GLScalar> Constructor4<(Vec2, B, C)> for Vec4 {
+impl<B: GLScalar, C: GLScalar> Vec4Constructor<(Vec2, B, C)> for Vec4 {
     fn new(args: (Vec2, B, C)) -> Vec4 {
         let (a, b, c) = args;
         Self::_new(a.x(), a.y(), b.as_(), c.as_())
     }
 }
 
-impl<A: GLScalar, C: GLScalar> Constructor4<(A, Vec2, C)> for Vec4 {
+impl<A: GLScalar, C: GLScalar> Vec4Constructor<(A, Vec2, C)> for Vec4 {
     fn new(args: (A, Vec2, C)) -> Vec4 {
         let (a, b, c) = args;
         Self::_new(a.as_(), b.x(), b.y(), c.as_())
     }
 }
 
-impl<A: GLScalar, B: GLScalar> Constructor4<(A, B, Vec2)> for Vec4 {
+impl<A: GLScalar, B: GLScalar> Vec4Constructor<(A, B, Vec2)> for Vec4 {
     fn new(args: (A, B, Vec2)) -> Vec4 {
         let (a, b, c) = args;
         Self::_new(a.as_(), b.as_(), c.x(), c.y())
     }
 }
 
-impl<B: GLScalar> Constructor4<(Vec3, B)> for Vec4 {
+impl<B: GLScalar> Vec4Constructor<(Vec3, B)> for Vec4 {
     fn new(args: (Vec3, B)) -> Vec4 {
         let (a, b) = args;
         Self::_new(a.x(), a.y(), a.z(), b.as_())
     }
 }
 
-impl<A: GLScalar> Constructor4<(A, Vec3)> for Vec4 {
+impl<A: GLScalar> Vec4Constructor<(A, Vec3)> for Vec4 {
     fn new(args: (A, Vec3)) -> Vec4 {
         let (a, b) = args;
         Self::_new(a.as_(), b.x(), b.y(), b.z())
     }
 }
 
-impl Constructor4<(Vec2, Vec2)> for Vec4 {
+impl Vec4Constructor<(Vec2, Vec2)> for Vec4 {
     fn new(args: (Vec2, Vec2)) -> Vec4 {
         let (a, b) = args;
         Self::_new(a.x(), a.y(), b.x(), b.y())
     }
 }
 
-impl<A: GLScalar> Constructor4<A> for Vec4 {
+impl<A: GLScalar> Vec4Constructor<A> for Vec4 {
     fn new(args: A) -> Vec4 {
         Self::_new( args.as_(), args.as_(), args.as_(), args.as_())
+    }
+}
+
+impl Vec4Constructor<Vec2> for Vec4 {
+    fn new(args: Vec2) -> Vec4 {
+        Self::_new(args.x(), args.y(), 0.0f32, 0.0f32)
+    }
+}
+
+impl Vec4Constructor<Vec3> for Vec4 {
+    fn new(args: Vec3) -> Vec4 {
+        Self::_new(args.x(), args.y(), args.z(), 0.0f32)
     }
 }
 
@@ -112,31 +124,31 @@ impl<A: GLScalar> Constructor4<A> for Vec4 {
 macro_rules! vec4 {
     ($a:expr, $b:expr, $c:expr, $d:expr) => {
         {
-            use $crate::vectors::Constructor4;
+            use $crate::vectors::Vec4Constructor;
             $crate::vectors::Vec4::new(($a, $b, $c, $d))
         }
     };
     ($a:expr, $b:expr, $c:expr) => {
         {
-            use $crate::vectors::Constructor4;
+            use $crate::vectors::Vec4Constructor;
             $crate::vectors::Vec4::new(($a, $b, $c))
         }
     };
     ($a:expr, $b:expr) => {
         {
-            use $crate::vectors::Constructor4;
+            use $crate::vectors::Vec4Constructor;
             $crate::vectors::Vec4::new(($a, $b))
         }
     };
     ($a:expr) => {
         {
-            use $crate::vectors::Constructor4;
+            use $crate::vectors::Vec4Constructor;
             $crate::vectors::Vec4::new($a)
         }
     };
     () => {
         {
-            use $crate::vectors::Constructor4;
+            use $crate::vectors::Vec4Constructor;
             $crate::vectors::Vec4::new(0)
         }
     };

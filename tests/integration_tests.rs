@@ -1,4 +1,4 @@
-use gl_types::{vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
+use gl_types::{mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -274,4 +274,19 @@ pub fn division() {
         a /= b;
         assert_eq!(a, c);
     }
+}
+
+#[test]
+pub fn mat_constructors() {
+    let m1 = mat3!(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    let m2 = mat4!(m1);
+
+    let expected = mat4!(1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9, 0, 0, 0, 0, 1);
+
+    let m1 = mat2!(1, 2, 3, 4);
+    let m2 = mat4!(m1);
+
+    let expected = mat4!(1, 2, 0, 0, 3, 4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+    assert_eq!(m2, expected);
 }

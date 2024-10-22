@@ -1,11 +1,9 @@
 use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign}};
 
 use multi_impl::multi_impl;
-use nalgebra::Matrix4;
+use nalgebra::{Matrix4, Vector4};
 
-use crate::{matrix_arithmetic, private::Seal, vec4, vectors::Vec4, GLScalar};
-
-use super::Mat3;
+use crate::{matrix_arithmetic, private::Seal, vectors::Vec4, GLScalar};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
@@ -66,22 +64,22 @@ where
     }
 }
 
-impl Mat4Constructor<Mat2> for Mat4 {
-    fn new(args: Mat2) -> Mat4 {
-        let mut cols: Vec<Vec4> = args.0.column_iter().map(|col| vec4!(col[0], col[1], 0, 0)).collect();
-        cols.push(vec4!(0, 0, 1, 0));
-        cols.push(vec4!(0, 0, 0, 1));
+impl Mat4Constructor<super::Mat2> for Mat4 {
+    fn new(args: super::Mat2) -> Mat4 {
+        let mut cols: Vec<_> = args.0.column_iter().map(|col| Vector4::new(col[0], col[1], 0.0f32, 0.0f32)).collect();
+        cols.push(Vector4::new(0.0f32, 0.0f32, 1.0f32, 0.0f32));
+        cols.push(Vector4::new(0.0f32, 0.0f32, 0.0f32, 1.0f32));
 
-        Mat4::new((cols[0], cols[1], cols[2], cols[3]))
+        Self(Matrix4::from_columns(&cols[..]))
     }
 }
 
-impl Mat4Constructor<Mat3> for Mat4 {
-    fn new(args: Mat3) -> Mat4 {
-        let mut cols: Vec<Vec4> = args.0.column_iter().map(|col| vec4!(col[0], col[1], col[2], 0)).collect();
-        cols.push(vec4!(0, 0, 0, 1));
+impl Mat4Constructor<super::Mat3> for Mat4 {
+    fn new(args: super::Mat3) -> Mat4 {
+        let mut cols: Vec<_> = args.0.column_iter().map(|col| Vector4::new(col[0], col[1], col[2], 0.0f32)).collect();
+        cols.push(Vector4::new(0.0f32, 0.0f32, 0.0f32, 1.0f32));
 
-        Mat4::new((cols[0], cols[1], cols[2], cols[3]))
+        Self(Matrix4::from_columns(&cols[..]))
     }
 }
 

@@ -5,7 +5,7 @@ use nalgebra::Vector2;
 
 use crate::{matrix_arithmetic, private::Seal, GLScalar};
 
-use super::VecN;
+use super::{Vec3, Vec4, VecN};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
@@ -49,20 +49,32 @@ impl VecN<2> for Vec2 {
     }
 }
 
-pub trait Constructor2<T>: Seal {
+pub trait Vec2Constructor<T>: Seal {
     fn new(args: T) -> Self;
 }
 
-impl<A: GLScalar, B: GLScalar> Constructor2<(A, B)> for Vec2 {
+impl<A: GLScalar, B: GLScalar> Vec2Constructor<(A, B)> for Vec2 {
     fn new(args: (A, B)) -> Self {
         let (a, b) = args;
         Self::_new(a.as_(), b.as_())
     }
 }
 
-impl<A: GLScalar> Constructor2<A> for Vec2 {
+impl<A: GLScalar> Vec2Constructor<A> for Vec2 {
     fn new(args: A) -> Self {
         Self::_new(args.as_(), args.as_())
+    }
+}
+
+impl Vec2Constructor<Vec3> for Vec2 {
+    fn new(args: Vec3) -> Self {
+        Self::_new(args.x(), args.y())
+    }
+}
+
+impl Vec2Constructor<Vec4> for Vec2 {
+    fn new(args: Vec4) -> Self {
+        Self::_new(args.x(), args.y())
     }
 }
 
@@ -70,19 +82,19 @@ impl<A: GLScalar> Constructor2<A> for Vec2 {
 macro_rules! vec2 {
     ($a:expr, $b:expr) => {
         {
-            use $crate::vectors::Constructor2;
+            use $crate::vectors::Vec2Constructor;
             $crate::vectors::Vec2::new(($a, $b))
         }
     };
     ($a:expr) => {
         {
-            use $crate::vectors::Constructor2;
+            use $crate::vectors::Vec2Constructor;
             $crate::vectors::Vec2::new($a)
         }
     };
     () => {
         {
-            use $crate::vectors::Constructor2;
+            use $crate::vectors::Vec2Constructor;
             $crate::vectors::Vec2::new(0)
         }
     };

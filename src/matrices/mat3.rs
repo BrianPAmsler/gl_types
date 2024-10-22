@@ -1,7 +1,7 @@
 use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign}};
 
 use multi_impl::multi_impl;
-use nalgebra::Matrix3;
+use nalgebra::{Matrix3, Vector3};
 
 use crate::{matrix_arithmetic, private::Seal, vectors::Vec3, GLScalar};
 
@@ -58,6 +58,23 @@ where
         {
     fn new(args: (A, B, C, D, E, F, G, H, I)) -> Mat3 {
         Mat3::_new(args.0.as_(), args.1.as_(), args.2.as_(), args.3.as_(), args.4.as_(), args.5.as_(), args.6.as_(), args.7.as_(), args.8.as_())
+    }
+}
+
+impl Mat3Constructor<super::Mat2> for Mat3 {
+    fn new(args: super::Mat2) -> Mat3 {
+        let mut cols: Vec<_> = args.0.column_iter().map(|col| Vector3::new(col[0], col[1], 0.0f32)).collect();
+        cols.push(Vector3::new(0.0f32, 0.0f32, 1.0f32));
+
+        Self(Matrix3::from_columns(&cols[..]))
+    }
+}
+
+impl Mat3Constructor<super::Mat4> for Mat3 {
+    fn new(args: super::Mat4) -> Mat3 {
+        let cols: Vec<_> = args.0.column_iter().map(|col| Vector3::new(col[0], col[1], col[2])).collect();
+
+        Self(Matrix3::from_columns(&cols[0..2]))
     }
 }
 

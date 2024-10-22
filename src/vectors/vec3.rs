@@ -5,7 +5,7 @@ use nalgebra::Vector3;
 
 use crate::{matrix_arithmetic, private::Seal, GLScalar};
 
-use super::{Vec2, VecN};
+use super::{Vec2, Vec4, VecN};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
@@ -49,59 +49,72 @@ impl VecN<3> for Vec3 {
 
 impl Seal for Vec3 {}
 
-pub trait Constructor3<T>: Seal {
+pub trait Vec3Constructor<T>: Seal {
     fn new(args: T) -> Vec3;
 }
 
-impl<A: GLScalar, B: GLScalar, C: GLScalar> Constructor3<(A, B, C)> for Vec3 {
+impl<A: GLScalar, B: GLScalar, C: GLScalar> Vec3Constructor<(A, B, C)> for Vec3 {
     fn new(args: (A, B, C)) -> Vec3 {
         let (a, b, c) = args;
         Self::_new(a.as_(), b.as_(), c.as_())
     }
 }
 
-impl<B: GLScalar> Constructor3<(Vec2, B)> for Vec3 {
+impl<B: GLScalar> Vec3Constructor<(Vec2, B)> for Vec3 {
     fn new(args: (Vec2, B)) -> Vec3 {
         let (a, b) = args;
         Self::_new(a.x(), a.y(), b.as_())
     }
 }
 
-impl<A: GLScalar> Constructor3<(A, Vec2)> for Vec3 {
+impl<A: GLScalar> Vec3Constructor<(A, Vec2)> for Vec3 {
     fn new(args: (A, Vec2)) -> Vec3 {
         let (a, b) = args;
         Self::_new(a.as_(), b.x(), b.y())
     }
 }
 
-impl<A: GLScalar> Constructor3<A> for Vec3 {
+impl<A: GLScalar> Vec3Constructor<A> for Vec3 {
     fn new(args: A) -> Vec3 {
         Self::_new(args.as_(), args.as_(), args.as_())
     }
 }
+
+impl Vec3Constructor<Vec2> for Vec3 {
+    fn new(args: Vec2) -> Vec3 {
+        Self::_new(args.x(), args.y(), 0.0f32)
+    }
+}
+
+impl Vec3Constructor<Vec4> for Vec3 {
+    fn new(args: Vec4) -> Vec3 {
+        Self::_new(args.x(), args.y(), args.z())
+    }
+}
+
 #[macro_export]
 macro_rules! vec3 {
     ($a:expr, $b:expr, $c:expr) => {
         {
-            use $crate::vectors::Constructor3;
+            use $crate::vectors::Vec3Constructor;
             $crate::vectors::Vec3::new(($a, $b, $c))
         }
     };
     ($a:expr, $b:expr) => {
         {
-            use $crate::vectors::Constructor3;
+            use $crate::vectors::Vec3Constructor;
             $crate::vectors::Vec3::new(($a, $b))
         }
     };
     ($a:expr) => {
         {
-            use $crate::vectors::Constructor3;
+            use $crate::vectors::Vec3Constructor;
             $crate::vectors::Vec3::new($a)
         }
     };
     () => {
         {
-            use $crate::vectors::Constructor3;
+            use $crate::vectors::Vec3Constructor;
             $crate::vectors::Vec3::new(0)
         }
     };
