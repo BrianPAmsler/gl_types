@@ -1,0 +1,82 @@
+use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign}};
+
+use multi_impl::multi_impl;
+use nalgebra::Matrix2;
+
+use crate::{matrix_arithmetic, private::Seal, vectors::Vec2, GLScalar};
+
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
+pub struct Mat2(pub(in crate) Matrix2<f32>);
+
+impl Debug for Mat2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl Mat2 {
+    pub(in crate) fn _new(m11: f32, m12: f32, m21: f32, m22: f32) -> Self {
+        Self(Matrix2::new(m11, m12, m21, m22))
+    }
+}
+
+matrix_arithmetic!(Mat2);
+
+impl Seal for Mat2 {}
+
+pub trait Mat2Constructor<T>: Seal {
+    fn new(args: T) -> Mat2;
+}
+
+impl<A: GLScalar> Mat2Constructor<A> for Mat2 {
+    fn new(args: A) -> Mat2 {
+        Mat2::_new(args.as_(), 0.0, 0.0, args.as_())
+    }
+}
+
+impl Mat2Constructor<Vec2> for Mat2 {
+    fn new(args: Vec2) -> Mat2 {
+        Self(Matrix2::from_diagonal(&args.0))
+    }
+}
+
+impl Mat2Constructor<(Vec2, Vec2)> for Mat2 {
+    fn new(args: (Vec2, Vec2)) -> Mat2 {
+        Self(Matrix2::from_columns(&[args.0.0, args.1.0]))
+    }
+}
+
+impl<A: GLScalar, B: GLScalar, C: GLScalar, D: GLScalar> Mat2Constructor<(A, B, C, D)> for Mat2 {
+    fn new(args: (A, B, C, D)) -> Mat2 {
+        Mat2::_new(args.0.as_(), args.1.as_(), args.2.as_(), args.3.as_())
+    }
+}
+
+#[macro_export]
+macro_rules! mat2 {
+    ($a:expr, $b:expr, $c:expr, $d:expr) => {
+        {
+            use $crate::matrices::Mat2Constructor;
+            $crate::matrices::Mat2::new(($a, $b, $c, $d))
+        }
+    };
+    ($a:expr, $b:expr) => {
+        {
+            use $crate::matrices::Mat2Constructor;
+            $crate::matrices::Mat2::new(($a, $b))
+        }
+    };
+    ($a:expr) => {
+        {
+            use $crate::matrices::Mat2Constructor;
+            $crate::matrices::Mat2::new($a)
+        }
+    };
+    () => {
+        {
+            use $crate::matrices::Mat2Constructor;
+            $crate::matrices::Mat2::new(0)
+        }
+    };
+}

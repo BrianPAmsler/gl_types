@@ -1,33 +1,29 @@
-use num::cast::AsPrimitive;
+mod vec2;
+mod vec3;
+mod vec4;
 
-pub mod vecn;
+pub use vec2::*;
+pub use vec3::*;
+pub use vec4::*;
 
-pub(in crate::vectors) mod private {
-    pub trait Seal {}
-
-    impl Seal for i32 {}
-    impl Seal for i64 {}
-    impl Seal for u32 {}
-    impl Seal for u64 {}
-    impl Seal for f32 {}
-    impl Seal for f64 {}
+pub trait VecN<const N: usize> {
+    fn as_array(self) -> [f32; N];
+    fn from_array(array: [f32; N]) -> Self;
+    fn as_slice(&self) -> &[f32; N];
+    fn as_slice_mut(&mut self) -> &mut [f32; N];
+    fn from_slice(slice: &[f32; N]) -> Self;
 }
 
-pub trait GLScalar: private::Seal + AsPrimitive<i32> + AsPrimitive<i64> + AsPrimitive<u32> + AsPrimitive<u64> + AsPrimitive<f32> + AsPrimitive<f64> {}
+pub mod swizzles {
+    use swizz::generate_swizzles;
 
-impl GLScalar for i32 {}
-impl GLScalar for i64 {}
-impl GLScalar for u32 {}
-impl GLScalar for u64 {}
-impl GLScalar for f32 {}
-impl GLScalar for f64 {}
+    use super::{Vec2, Vec3, Vec4};
 
-pub trait Parameter2: private::Seal {}
+    generate_swizzles!(Vec2, xy, 4);
+    generate_swizzles!(Vec3, xyz, 4);
+    generate_swizzles!(Vec4, xyzw, 4);
 
-impl<T: GLScalar> Parameter2 for T {}
-
-pub trait Parameter3: private::Seal {}
-impl<T: Parameter2> Parameter3 for T {}
-
-pub trait Parameter4: private::Seal {}
-impl<T: Parameter3> Parameter4 for T {}
+    generate_swizzles!(Vec2, rg, 4);
+    generate_swizzles!(Vec3, rgb, 4);
+    generate_swizzles!(Vec4, rgba, 4);
+}

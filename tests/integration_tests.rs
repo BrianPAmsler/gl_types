@@ -1,4 +1,4 @@
-use gl_types::{vec2, vec3, vec4, vectors::vecn::{Vec2, Vec3, Vec4, VecN}};
+use gl_types::{vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -25,7 +25,7 @@ pub fn slices() {
     for _ in 0..TEST_COUNT {
         // Vec2
         let mut array = [rng.gen(), rng.gen()];
-        let mut v = Vec2::_new(array[0], array[1]);
+        let mut v = vec2!(array[0], array[1]);
         
         assert_eq!(v.as_slice(), &array);
         assert_eq!(v.as_slice_mut(), &mut array);
@@ -39,7 +39,7 @@ pub fn slices() {
         
         // Vec3
         let mut array = [rng.gen(), rng.gen(), rng.gen()];
-        let mut v = Vec3::_new(array[0], array[1], array[2]);
+        let mut v = vec3!(array[0], array[1], array[2]);
 
         assert_eq!(v.as_slice(), &array);
         assert_eq!(v.as_slice_mut(), &mut array);
@@ -53,7 +53,7 @@ pub fn slices() {
         
         // Vec4
         let mut array = [rng.gen(), rng.gen(), rng.gen(), rng.gen()];
-        let mut v = Vec4::_new(array[0], array[1], array[2], array[3]);
+        let mut v = vec4!(array[0], array[1], array[2], array[3]);
 
         assert_eq!(v.as_slice(), &array);
         assert_eq!(v.as_slice_mut(), &mut array);
@@ -71,27 +71,27 @@ pub fn slices() {
 pub fn constructors() {
     for _ in 0..TEST_COUNT {
         let v2: Vec2 = rand_vec();
-        assert_eq!(vec2!(), Vec2::_new(0.0, 0.0));
-        assert_eq!(vec2!(v2.x()), Vec2::_new(v2.x(), v2.x()));
-        assert_eq!(vec2!(v2.x(), v2.y()), Vec2::_new(v2.x(), v2.y()));
+        assert_eq!(vec2!(), vec2!(0.0, 0.0));
+        assert_eq!(vec2!(v2.x()), vec2!(v2.x(), v2.x()));
+        assert_eq!(vec2!(v2.x(), v2.y()), vec2!(v2.x(), v2.y()));
     
         let v3: Vec3 = rand_vec();
-        assert_eq!(vec3!(), Vec3::_new(0.0, 0.0, 0.0));
-        assert_eq!(vec3!(v3.x()), Vec3::_new(v3.x(), v3.x(), v3.x()));
-        assert_eq!(vec3!(vec2!(v3.x()), v3.y()), Vec3::_new(v3.x(), v3.x(), v3.y()));
-        assert_eq!(vec3!(v3.x(), vec2!(v3.y())), Vec3::_new(v3.x(), v3.y(), v3.y()));
-        assert_eq!(vec3!(v3.x(), v3.y(), v3.z()), Vec3::_new(v3.x(), v3.y(), v3.z()));
+        assert_eq!(vec3!(), vec3!(0.0, 0.0, 0.0));
+        assert_eq!(vec3!(v3.x()), vec3!(v3.x(), v3.x(), v3.x()));
+        assert_eq!(vec3!(vec2!(v3.x()), v3.y()), vec3!(v3.x(), v3.x(), v3.y()));
+        assert_eq!(vec3!(v3.x(), vec2!(v3.y())), vec3!(v3.x(), v3.y(), v3.y()));
+        assert_eq!(vec3!(v3.x(), v3.y(), v3.z()), vec3!(v3.x(), v3.y(), v3.z()));
     
         let v4: Vec4 = rand_vec();
-        assert_eq!(vec4!(), Vec4::_new(0.0, 0.0, 0.0, 0.0));
-        assert_eq!(vec4!(v4.x()), Vec4::_new(v4.x(), v4.x(), v4.x(), v4.x()));
-        assert_eq!(vec4!(vec3!(v4.x()), v4.y()), Vec4::_new(v4.x(), v4.x(), v4.x(), v4.y()));
-        assert_eq!(vec4!(v4.x(), vec3!(v4.y())), Vec4::_new(v4.x(), v4.y(), v4.y(), v4.y()));
-        assert_eq!(vec4!(vec2!(v4.x()), vec2!(v4.y())), Vec4::_new(v4.x(), v4.x(), v4.y(), v4.y()));
-        assert_eq!(vec4!(vec2!(v4.x()), v4.y(), v4.z()), Vec4::_new(v4.x(), v4.x(), v4.y(), v4.z()));
-        assert_eq!(vec4!(v4.x(), vec2!(v4.y()), v4.z()), Vec4::_new(v4.x(), v4.y(), v4.y(), v4.z()));
-        assert_eq!(vec4!(v4.x(), v4.y(), vec2!(v4.z())), Vec4::_new(v4.x(), v4.y(), v4.z(), v4.z()));
-        assert_eq!(vec4!(v4.x(), v4.y(), v4.z(), v4.w()), Vec4::_new(v4.x(), v4.y(), v4.z(), v4.w()));
+        assert_eq!(vec4!(), vec4!(0.0, 0.0, 0.0, 0.0));
+        assert_eq!(vec4!(v4.x()), vec4!(v4.x(), v4.x(), v4.x(), v4.x()));
+        assert_eq!(vec4!(vec3!(v4.x()), v4.y()), vec4!(v4.x(), v4.x(), v4.x(), v4.y()));
+        assert_eq!(vec4!(v4.x(), vec3!(v4.y())), vec4!(v4.x(), v4.y(), v4.y(), v4.y()));
+        assert_eq!(vec4!(vec2!(v4.x()), vec2!(v4.y())), vec4!(v4.x(), v4.x(), v4.y(), v4.y()));
+        assert_eq!(vec4!(vec2!(v4.x()), v4.y(), v4.z()), vec4!(v4.x(), v4.x(), v4.y(), v4.z()));
+        assert_eq!(vec4!(v4.x(), vec2!(v4.y()), v4.z()), vec4!(v4.x(), v4.y(), v4.y(), v4.z()));
+        assert_eq!(vec4!(v4.x(), v4.y(), vec2!(v4.z())), vec4!(v4.x(), v4.y(), v4.z(), v4.z()));
+        assert_eq!(vec4!(v4.x(), v4.y(), v4.z(), v4.w()), vec4!(v4.x(), v4.y(), v4.z(), v4.w()));
     }
 }
 
