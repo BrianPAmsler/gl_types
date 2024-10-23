@@ -1,4 +1,4 @@
-use gl_types::{mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
+use gl_types::{length, mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -289,4 +289,11 @@ pub fn mat_constructors() {
     let expected = mat4!(1, 2, 0, 0, 3, 4, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
     assert_eq!(m2, expected);
+}
+
+#[test]
+pub fn length_test() {
+    let v2 = vec2!(3, 6);
+
+    assert_eq!(5.0, length(v2))
 }

@@ -1,5 +1,9 @@
+mod functions;
+
 pub mod vectors;
 pub mod matrices;
+
+pub use functions::*;
 
 pub(in crate) mod private {
     pub trait Seal {}
@@ -10,6 +14,20 @@ pub(in crate) mod private {
     impl Seal for u64 {}
     impl Seal for f32 {}
     impl Seal for f64 {}
+}
+
+mod inner_matrix {
+    use nalgebra::{ArrayStorage, Const, Matrix};
+
+    pub trait InnerMatrix<const R: usize, const C: usize> {
+        fn get_inner_matrix(&self) -> &Matrix<f32, Const<R>, Const<C>, ArrayStorage<f32, R, C>>;
+        fn get_inner_matrix_mut(&mut self) -> &mut Matrix<f32, Const<R>, Const<C>, ArrayStorage<f32, R, C>>;
+        fn into_inner_matrix(self) -> Matrix<f32, Const<R>, Const<C>, ArrayStorage<f32, R, C>>;
+    }
+}
+
+pub trait Make<T>: private::Seal {
+    fn make(inner: T) -> Self;
 }
 
 pub trait GLScalar: private::Seal + AsPrimitive<i32> + AsPrimitive<i64> + AsPrimitive<u32> + AsPrimitive<u64> + AsPrimitive<f32> + AsPrimitive<f64> {}
@@ -143,5 +161,67 @@ macro_rules! matrix_arithmetic {
     };
 }
 
+use inner_matrix::InnerMatrix;
+use matrices::MatN;
 pub(crate) use matrix_arithmetic;
+use nalgebra::{ArrayStorage, Const, Matrix, SVector, VectorN};
 use num::cast::AsPrimitive;
+use vectors::VecN;
+
+impl<const N: usize, T: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>>> MatN<N> for T {
+    fn as_array(self) -> [[f32; N]; N] {
+        let mat = self.into_inner_matrix();
+
+        mat.data.0
+    }
+    
+    fn from_array(array: [[f32; N]; N]) -> Self {
+        Self::make(Matrix::<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>::from_data(
+            ArrayStorage::<f32, N, N>(array)
+        ))
+    }
+    
+    fn as_slice(&self) -> &[[f32; N]; N] {
+        &self.get_inner_matrix().data.0
+    }
+    
+    fn as_slice_mut(&mut self) -> &mut [[f32; N]; N] {
+        &mut self.get_inner_matrix_mut().data.0
+    }
+    
+    fn from_slice(slice: &[[f32; N]; N]) -> Self {
+        Self::make(Matrix::<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>::from_data(
+            ArrayStorage::<f32, N, N>(slice.to_owned())
+        ))
+    }
+
+}
+
+impl<const N: usize, T: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>>> VecN<N> for T {
+    fn as_array(self) -> [f32; N] {
+        let mat = self.into_inner_matrix();
+
+        mat.data.0[0]
+    }
+    
+    fn from_array(array: [f32; N]) -> Self {
+        Self::make(Matrix::<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>::from_data(
+            ArrayStorage::<f32, N, 1>([array])
+        ))
+    }
+    
+    fn as_slice(&self) -> &[f32; N] {
+        &self.get_inner_matrix().data.0[0]
+    }
+    
+    fn as_slice_mut(&mut self) -> &mut [f32; N] {
+        &mut self.get_inner_matrix_mut().data.0[0]
+    }
+    
+    fn from_slice(slice: &[f32; N]) -> Self {
+        Self::make(Matrix::<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>::from_data(
+            ArrayStorage::<f32, N, 1>([slice.to_owned()])
+        ))
+    }
+
+}

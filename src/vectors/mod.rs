@@ -6,7 +6,9 @@ pub use vec2::*;
 pub use vec3::*;
 pub use vec4::*;
 
-pub trait VecN<const N: usize> {
+use crate::inner_matrix::InnerMatrix;
+
+pub trait VecN<const N: usize>: InnerMatrix<N, 1> {
     fn as_array(self) -> [f32; N];
     fn from_array(array: [f32; N]) -> Self;
     fn as_slice(&self) -> &[f32; N];

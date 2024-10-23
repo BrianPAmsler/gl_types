@@ -3,7 +3,7 @@ use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub,
 use multi_impl::multi_impl;
 use nalgebra::{Matrix3, Vector3};
 
-use crate::{matrix_arithmetic, private::Seal, vectors::Vec3, GLScalar};
+use crate::{inner_matrix::InnerMatrix, matrix_arithmetic, private::Seal, vectors::Vec3, GLScalar, Make};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
@@ -104,4 +104,24 @@ macro_rules! mat3 {
             $crate::matrices::Mat3::new(0)
         }
     };
+}
+
+impl InnerMatrix<3, 3> for Mat3 {
+    fn get_inner_matrix(&self) -> &nalgebra::Matrix<f32, nalgebra::Const<3>, nalgebra::Const<3>, nalgebra::ArrayStorage<f32, 3, 3>> {
+        &self.0
+    }
+
+    fn get_inner_matrix_mut(&mut self) -> &mut nalgebra::Matrix<f32, nalgebra::Const<3>, nalgebra::Const<3>, nalgebra::ArrayStorage<f32, 3, 3>> {
+        &mut self.0
+    }
+
+    fn into_inner_matrix(self) -> nalgebra::Matrix<f32, nalgebra::Const<3>, nalgebra::Const<3>, nalgebra::ArrayStorage<f32, 3, 3>> {
+        self.0
+    }
+}
+
+impl Make<Matrix3<f32>> for Mat3 {
+    fn make(inner: Matrix3<f32>) -> Self {
+        Self(inner)
+    }
 }

@@ -3,7 +3,7 @@ use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub,
 use multi_impl::multi_impl;
 use nalgebra::Vector4;
 
-use crate::{matrix_arithmetic, private::Seal, GLScalar};
+use crate::{inner_matrix::InnerMatrix, matrix_arithmetic, private::Seal, GLScalar};
 
 use super::{Vec2, Vec3, VecN};
 
@@ -152,4 +152,18 @@ macro_rules! vec4 {
             $crate::vectors::Vec4::new(0)
         }
     };
+}
+
+impl InnerMatrix<4, 1> for Vec4 {
+    fn get_inner_matrix(&self) -> &nalgebra::Matrix<f32, nalgebra::Const<4>, nalgebra::Const<1>, nalgebra::ArrayStorage<f32, 4, 1>> {
+        &self.0
+    }
+
+    fn get_inner_matrix_mut(&mut self) -> &mut nalgebra::Matrix<f32, nalgebra::Const<4>, nalgebra::Const<1>, nalgebra::ArrayStorage<f32, 4, 1>> {
+        &mut self.0
+    }
+
+    fn into_inner_matrix(self) -> nalgebra::Matrix<f32, nalgebra::Const<4>, nalgebra::Const<1>, nalgebra::ArrayStorage<f32, 4, 1>> {
+        self.0
+    }
 }
