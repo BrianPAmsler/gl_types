@@ -1,9 +1,6 @@
-mod functions;
-
+pub mod functions;
 pub mod vectors;
 pub mod matrices;
-
-pub use functions::*;
 
 pub(in crate) mod private {
     pub trait Seal {}
@@ -164,7 +161,7 @@ macro_rules! matrix_arithmetic {
 use inner_matrix::InnerMatrix;
 use matrices::MatN;
 pub(crate) use matrix_arithmetic;
-use nalgebra::{ArrayStorage, Const, Matrix, SVector, VectorN};
+use nalgebra::{ArrayStorage, Const, Matrix};
 use num::cast::AsPrimitive;
 use vectors::VecN;
 

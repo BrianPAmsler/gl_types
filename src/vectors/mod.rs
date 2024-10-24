@@ -2,13 +2,14 @@ mod vec2;
 mod vec3;
 mod vec4;
 
+use nalgebra::{ArrayStorage, Const, Matrix};
 pub use vec2::*;
 pub use vec3::*;
 pub use vec4::*;
 
-use crate::inner_matrix::InnerMatrix;
+use crate::{inner_matrix::InnerMatrix, Make};
 
-pub trait VecN<const N: usize>: InnerMatrix<N, 1> {
+pub trait VecN<const N: usize>: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>> {
     fn as_array(self) -> [f32; N];
     fn from_array(array: [f32; N]) -> Self;
     fn as_slice(&self) -> &[f32; N];
