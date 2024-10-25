@@ -1,9 +1,13 @@
 mod functions;
+mod element_wise;
 
 pub mod vectors;
 pub mod matrices;
 
 pub use functions::*;
+pub use element_wise::*;
+
+use num::cast::AsPrimitive;
 
 pub(in crate) mod private {
     pub trait Seal {}
@@ -161,67 +165,4 @@ macro_rules! matrix_arithmetic {
     };
 }
 
-use inner_matrix::InnerMatrix;
-use matrices::MatN;
 pub(crate) use matrix_arithmetic;
-use nalgebra::{ArrayStorage, Const, Matrix, SVector, VectorN};
-use num::cast::AsPrimitive;
-use vectors::VecN;
-
-impl<const N: usize, T: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>>> MatN<N> for T {
-    fn as_array(self) -> [[f32; N]; N] {
-        let mat = self.into_inner_matrix();
-
-        mat.data.0
-    }
-    
-    fn from_array(array: [[f32; N]; N]) -> Self {
-        Self::make(Matrix::<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>::from_data(
-            ArrayStorage::<f32, N, N>(array)
-        ))
-    }
-    
-    fn as_slice(&self) -> &[[f32; N]; N] {
-        &self.get_inner_matrix().data.0
-    }
-    
-    fn as_slice_mut(&mut self) -> &mut [[f32; N]; N] {
-        &mut self.get_inner_matrix_mut().data.0
-    }
-    
-    fn from_slice(slice: &[[f32; N]; N]) -> Self {
-        Self::make(Matrix::<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>::from_data(
-            ArrayStorage::<f32, N, N>(slice.to_owned())
-        ))
-    }
-
-}
-
-impl<const N: usize, T: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>>> VecN<N> for T {
-    fn as_array(self) -> [f32; N] {
-        let mat = self.into_inner_matrix();
-
-        mat.data.0[0]
-    }
-    
-    fn from_array(array: [f32; N]) -> Self {
-        Self::make(Matrix::<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>::from_data(
-            ArrayStorage::<f32, N, 1>([array])
-        ))
-    }
-    
-    fn as_slice(&self) -> &[f32; N] {
-        &self.get_inner_matrix().data.0[0]
-    }
-    
-    fn as_slice_mut(&mut self) -> &mut [f32; N] {
-        &mut self.get_inner_matrix_mut().data.0[0]
-    }
-    
-    fn from_slice(slice: &[f32; N]) -> Self {
-        Self::make(Matrix::<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>::from_data(
-            ArrayStorage::<f32, N, 1>([slice.to_owned()])
-        ))
-    }
-
-}

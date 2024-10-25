@@ -5,7 +5,7 @@ use nalgebra::{Matrix, Vector2};
 
 use crate::{inner_matrix::InnerMatrix, matrix_arithmetic, private::Seal, GLScalar, Make};
 
-use super::{Vec3, Vec4, VecN};
+use super::{Vec3, Vec4};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
