@@ -1,8 +1,8 @@
-mod functions;
 mod element_wise;
 
 pub mod vectors;
 pub mod matrices;
+pub mod functions;
 
 pub use functions::*;
 pub use element_wise::*;
