@@ -1,5 +1,3 @@
-mod angle_trig;
-mod geometric;
-
-pub use angle_trig::*;
-pub use geometric::*;
+pub mod angle_trig;
+pub mod geometric;
+pub mod matrix;

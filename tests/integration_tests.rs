@@ -1,4 +1,4 @@
-use gl_types::{length, mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
+use gl_types::{functions::geometric::{length, normalize}, mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -293,7 +293,14 @@ pub fn mat_constructors() {
 
 #[test]
 pub fn length_test() {
-    let v2 = vec2!(3, 6);
+    let v2 = vec2!(3, 4);
 
     assert_eq!(5.0, length(v2))
+}
+
+#[test]
+pub fn geom_test() {
+    let v = vec3!(2, 0, 0);
+
+    assert_eq!(normalize(v), vec3!(1, 0, 0));
 }

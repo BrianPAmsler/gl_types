@@ -3,9 +3,9 @@ use std::{fmt::Debug, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub,
 use multi_impl::multi_impl;
 use nalgebra::{Matrix, Vector3};
 
-use crate::{inner_matrix::InnerMatrix, matrix_arithmetic, private::Seal, GLScalar};
+use crate::{inner_matrix::InnerMatrix, matrix_arithmetic, private::Seal, GLScalar, Make};
 
-use super::{Vec2, Vec4, VecN};
+use super::{Vec2, Vec4};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
@@ -24,28 +24,6 @@ impl Vec3 {
 }
 
 matrix_arithmetic!(Vec3);
-
-impl VecN<3> for Vec3 {
-    fn as_array(self) -> [f32; 3] {
-        [self.0[0], self.0[1], self.0[2]]
-    }
-
-    fn from_array(array: [f32; 3]) -> Self {
-        Self::_new(array[0], array[1], array[2])
-    }
-
-    fn as_slice(&self) -> &[f32; 3] {
-        unsafe { std::mem::transmute(self) }
-    }
-
-    fn as_slice_mut(&mut self) -> &mut [f32; 3] {
-        unsafe { std::mem::transmute(self) }
-    }
-
-    fn from_slice(slice: &[f32; 3]) -> Self {
-        Self::_new(slice[0], slice[1], slice[2])
-    }
-}
 
 impl Seal for Vec3 {}
 
@@ -131,5 +109,11 @@ impl InnerMatrix<3, 1> for Vec3 {
 
     fn into_inner_matrix(self) -> Matrix<f32, nalgebra::Const<3>, nalgebra::Const<1>, nalgebra::ArrayStorage<f32, 3, 1>> {
         self.0
+    }
+}
+
+impl Make<Vector3<f32>> for Vec3 {
+    fn make(inner: Vector3<f32>) -> Self {
+        Self(inner)
     }
 }
