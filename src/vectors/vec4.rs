@@ -18,7 +18,10 @@ impl Debug for Vec4 {
 }
 
 impl Vec4 {
-    pub(in crate) fn _new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub const ZERO: Vec4 = Vec4::_new(0.0, 0.0, 0.0, 0.0);
+    pub const ONE: Vec4 = Vec4::_new(1.0, 1.0, 1.0, 1.0);
+
+    pub(in crate) const fn _new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Self(Vector4::new(x, y, z, w))
     }
 }

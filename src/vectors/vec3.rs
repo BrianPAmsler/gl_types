@@ -18,7 +18,10 @@ impl Debug for Vec3 {
 }
 
 impl Vec3 {
-    pub(in crate) fn _new(x: f32, y: f32, z: f32) -> Vec3 {
+    pub const ZERO: Vec3 = Vec3::_new(0.0, 0.0, 0.0);
+    pub const ONE: Vec3 = Vec3::_new(1.0, 1.0, 1.0);
+
+    pub(in crate) const fn _new(x: f32, y: f32, z: f32) -> Vec3 {
         Self(Vector3::new(x, y, z))
     }
 }

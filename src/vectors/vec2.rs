@@ -18,7 +18,10 @@ impl Debug for Vec2 {
 }
 
 impl Vec2 {
-    pub(in crate) fn _new(x: f32, y: f32) -> Self {
+    pub const ZERO: Vec2 = Vec2::_new(0.0, 0.0);
+    pub const ONE: Vec2 = Vec2::_new(1.0, 1.0);
+
+    pub(in crate) const fn _new(x: f32, y: f32) -> Self {
         Self(Vector2::new(x, y))
     }
 }

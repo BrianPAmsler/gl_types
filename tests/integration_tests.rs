@@ -283,6 +283,8 @@ pub fn mat_constructors() {
 
     let expected = mat4!(1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9, 0, 0, 0, 0, 1);
 
+    assert_eq!(m2, expected);
+
     let m1 = mat2!(1, 2, 3, 4);
     let m2 = mat4!(m1);
 

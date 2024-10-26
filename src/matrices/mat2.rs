@@ -16,7 +16,10 @@ impl Debug for Mat2 {
 }
 
 impl Mat2 {
-    pub(in crate) fn _new(m11: f32, m12: f32, m21: f32, m22: f32) -> Self {
+    pub const ZERO: Mat2 = Mat2::_new(0.0, 0.0, 0.0, 0.0);
+    pub const IDENTITY: Mat2 = Mat2::_new(1.0, 0.0, 0.0, 1.0);
+
+    pub(in crate) const fn _new(m11: f32, m12: f32, m21: f32, m22: f32) -> Self {
         Self(Matrix2::new(m11, m12, m21, m22))
     }
 }
