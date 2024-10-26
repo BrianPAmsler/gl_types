@@ -4,34 +4,34 @@ use core::f32;
 
 use crate::{matrices::MatN, vectors::VecN};
 
-pub fn matrixCompMult<const N: usize, M: MatN<N>>(x: M, y: M) -> M {
-    let a = x.into_inner_matrix();
-    let b = y.into_inner_matrix();
+pub fn matrixCompMult<const N: usize, M: MatN<N>>(x: &M, y: &M) -> M {
+    let a = x.get_inner_matrix();
+    let b = y.get_inner_matrix();
 
     M::make(a.component_mul(&b))
 }
 
-pub fn outerProduct<const N: usize, V: VecN<N>, M: MatN<N>>(x: V, y: V) -> M {
-    let a = x.into_inner_matrix();
-    let b = y.into_inner_matrix();
+pub fn outerProduct<const N: usize, V: VecN<N>, M: MatN<N>>(x: &V, y: &V) -> M {
+    let a = x.get_inner_matrix();
+    let b = y.get_inner_matrix();
 
     let c = a * b.transpose();
     M::make(c)
 }
 
-pub fn transpose<const N: usize, M: MatN<N>>(mat: M) -> M {
-    let m = mat.into_inner_matrix();
+pub fn transpose<const N: usize, M: MatN<N>>(mat: &M) -> M {
+    let m = mat.get_inner_matrix();
     M::make(m.transpose())
 }
 
-pub fn determinant<const N: usize, M: MatN<N>>(mat: M) -> f32
+pub fn determinant<const N: usize, M: MatN<N>>(mat: &M) -> f32
     where
         nalgebra::Const<N>: nalgebra::DimMin<nalgebra::Const<N>, Output = nalgebra::Const<N>> {
-    mat.into_inner_matrix().determinant()
+    mat.get_inner_matrix().determinant()
 } 
 
-pub fn inverse<const N: usize, M: MatN<N>>(mat: M) -> M {
-    let m = mat.into_inner_matrix();
+pub fn inverse<const N: usize, M: MatN<N>>(mat: &M) -> M {
+    let m = mat.get_inner_matrix();
 
     match m.try_inverse() {
         Some(m) => M::make(m),
