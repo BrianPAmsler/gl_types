@@ -1,17 +1,24 @@
-use std::{f32::consts::PI, ops::Mul};
+use std::f32::consts::PI;
 
-pub fn radians<T: Mul<f32, Output = T>>(degrees: T) -> T {
+use crate::ElementWise;
+
+pub fn radians<const R: usize, const C:  usize, T: ElementWise<R, C>>(degrees: T) -> T {
     const RATIO: f32 = PI / 180.0;
 
-    degrees * RATIO
+    degrees.operate(|el| *el *= RATIO)
 }
 
-pub fn degrees<T: Mul<f32, Output = T>>(radians: T) -> T {
+pub fn degrees<const R: usize, const C:  usize, T: ElementWise<R, C>>(radians: T) -> T {
     const RATIO: f32 = 180.0 / PI;
 
-    radians * RATIO
+    radians.operate(|el| *el *= RATIO)
 }
 
-// pub fn sin<T: Mul<f32, Output = T>>(angle: T) -> T {
+pub fn sin<const R: usize, const C:  usize, T: ElementWise<R, C>>(angle: T) -> T {
+    angle.operate(|el| *el = el.sin())
+}
 
-// }
+pub fn cos<const R: usize, const C:  usize, T: ElementWise<R, C>>(angle: T) -> T {
+    angle.operate(|el| *el = el.cos())
+}
+
