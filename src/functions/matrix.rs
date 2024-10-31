@@ -31,9 +31,9 @@ pub fn determinant<const N: usize, M: MatN<N>>(mat: &M) -> f32
 } 
 
 pub fn inverse<const N: usize, M: MatN<N>>(mat: &M) -> M {
-    let m = mat.get_inner_matrix();
+    let mat = mat.get_inner_matrix();
 
-    match m.try_inverse() {
+    match mat.try_inverse() {
         Some(m) => M::make(m),
         None => M::from_array([[f32::NAN; N]; N]),
     }

@@ -1,4 +1,4 @@
-use gl_types::{functions::geometric::{length, normalize}, mat2, mat3, mat4, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
+use gl_types::{functions::geometric::{length, normalize}, mat2, mat3, mat4, matrix::inverse, vec2, vec3, vec4, vectors::{Vec2, Vec3, Vec4, VecN}};
 use rand::Rng;
 
 const TEST_COUNT: usize = 100000;
@@ -305,4 +305,12 @@ pub fn geom_test() {
     let v = vec3!(2, 0, 0);
 
     assert_eq!(normalize(v), vec3!(1, 0, 0));
+}
+
+#[test]
+fn inverse_test() {
+    let mat = mat3!(vec3!(1, 4, 7), vec3!(2, 5, 2), vec3!(3, 6, 9));
+    let inverse = inverse(&mat);
+
+    assert_eq!(inverse, mat3!(vec3!(-11.0 / 12.0, - 1.0 / 6.0, 3.0 / 4.0), vec3!(1.0 / 3.0, 1.0 / 3.0, -1.0 / 3.0), vec3!(1.0 / 12.0, -1.0 / 6.0, 1.0 / 12.0)));
 }
