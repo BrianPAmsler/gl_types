@@ -120,3 +120,9 @@ impl Make<Vector3<f32>> for Vec3 {
         Self(inner)
     }
 }
+
+impl AsRef<Vec3> for Vec3 {
+    fn as_ref(&self) -> &Vec3 {
+        self
+    }
+}

@@ -9,7 +9,7 @@ pub use vec4::*;
 
 use crate::{inner_matrix::InnerMatrix, Make};
 
-pub trait VecN<const N: usize>: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>> {
+pub trait VecN<const N: usize>: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>> + AsRef<Self> {
     fn as_array(self) -> [f32; N];
     fn from_array(array: [f32; N]) -> Self;
     fn as_slice(&self) -> &[f32; N];
@@ -31,7 +31,7 @@ pub mod swizzles {
     generate_swizzles!(Vec4, rgba, 4);
 }
 
-impl<const N: usize, T: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>>> VecN<N> for T {
+impl<const N: usize, T: InnerMatrix<N, 1> + Make<Matrix<f32, Const<N>, Const<1>, ArrayStorage<f32, N, 1>>> + AsRef<T>> VecN<N> for T {
     fn as_array(self) -> [f32; N] {
         let mat = self.into_inner_matrix();
 

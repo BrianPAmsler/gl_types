@@ -9,7 +9,7 @@ use nalgebra::{ArrayStorage, Const, Matrix};
 
 use crate::{inner_matrix::InnerMatrix, Make};
 
-pub trait MatN<const N: usize>: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>> {
+pub trait MatN<const N: usize>: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>> + AsRef<Self> {
     fn as_array(self) -> [[f32; N]; N];
     fn from_array(array: [[f32; N]; N]) -> Self;
     fn as_slice(&self) -> &[[f32; N]; N];
@@ -17,7 +17,7 @@ pub trait MatN<const N: usize>: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, C
     fn from_slice(slice: &[[f32; N]; N]) -> Self;
 }
 
-impl<const N: usize, T: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>>> MatN<N> for T {
+impl<const N: usize, T: InnerMatrix<N, N> + Make<Matrix<f32, Const<N>, Const<N>, ArrayStorage<f32, N, N>>> + AsRef<T>> MatN<N> for T {
     fn as_array(self) -> [[f32; N]; N] {
         let mat = self.into_inner_matrix();
 

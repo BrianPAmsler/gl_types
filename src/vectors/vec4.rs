@@ -154,3 +154,9 @@ impl Make<Vector4<f32>> for Vec4 {
         Self(inner)
     }
 }
+
+impl AsRef<Vec4> for Vec4 {
+    fn as_ref(&self) -> &Vec4 {
+        self
+    }
+}

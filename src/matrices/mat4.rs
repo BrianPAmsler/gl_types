@@ -133,3 +133,9 @@ impl Make<Matrix4<f32>> for Mat4 {
         Self(inner)
     }
 }
+
+impl AsRef<Mat4> for Mat4 {
+    fn as_ref(&self) -> &Mat4 {
+        self
+    }
+}

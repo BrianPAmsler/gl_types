@@ -310,7 +310,9 @@ pub fn geom_test() {
 #[test]
 fn inverse_test() {
     let mat = mat3!(vec3!(1, 4, 7), vec3!(2, 5, 2), vec3!(3, 6, 9));
-    let inverse = inverse(&mat);
+    let inverse = inverse(mat);
 
     assert_eq!(inverse, mat3!(vec3!(-11.0 / 12.0, - 1.0 / 6.0, 3.0 / 4.0), vec3!(1.0 / 3.0, 1.0 / 3.0, -1.0 / 3.0), vec3!(1.0 / 12.0, -1.0 / 6.0, 1.0 / 12.0)));
 }
+
+// Need more tests, but i'm lazy
