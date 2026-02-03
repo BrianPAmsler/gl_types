@@ -7,6 +7,7 @@ use super::geometric::{cross, dot, normalize};
 pub fn lookAt(eye: Vec3, center: Vec3, up: Vec3) -> Mat4 {
     let forward = normalize(center - eye);
     let right = normalize(cross(up, forward));
+    let up = cross(forward, right);
 
     let [rx, ry, rz] = right.0.data.0[0];
     let [fx, fy, fz] = forward.0.data.0[0];
@@ -17,9 +18,9 @@ pub fn lookAt(eye: Vec3, center: Vec3, up: Vec3) -> Mat4 {
     let tz = dot(eye, forward);
 
     Mat4::_new(
-        rx, ry, rz, tx,
-        ux, uy, uz, ty,
-        fx, fy, fz, tz,
+        rx, ry, rz, -tx,
+        ux, uy, uz, -ty,
+        fx, fy, fz, -tz,
         0.0, 0.0, 0.0, 1.0
     )
 }
