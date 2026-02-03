@@ -5,7 +5,7 @@ use crate::{matrices::Mat4, vectors::Vec3};
 use super::geometric::{cross, dot, normalize};
 
 pub fn lookAt(eye: Vec3, center: Vec3, up: Vec3) -> Mat4 {
-    let forward = normalize(center - eye);
+    let forward = normalize(eye - center);
     let right = normalize(cross(up, forward));
     let up = cross(forward, right);
 
