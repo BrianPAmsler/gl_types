@@ -31,7 +31,8 @@ pub fn cross<const N: usize, V: VecN<N>, R: AsRef<V>>(x: R, y: R) -> V {
     let a = x.as_ref().get_inner_matrix();
     let b = y.as_ref().get_inner_matrix();
 
-    V::make(a.cross(&b))
+    // Reverse order for left-handed cross product
+    V::make(b.cross(&a))
 }
 
 pub fn normalize<const N: usize, V: VecN<N>, R: AsRef<V>>(x: R) -> V {
