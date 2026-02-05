@@ -15,7 +15,7 @@ pub fn ortho(left: f32, right: f32, bottom: f32, top: f32, zNear: f32, zFar: f32
         2.0 / (right - left), 0.0                 , 0.0                  , -(right + left) / (right - left),
         0.0                 , 2.0 / (top - bottom), 0.0                  , -(top + bottom) / (top - bottom),
         0.0                 , 0.0                 , -2.0 / (zFar - zNear), -(zFar + zNear) / (zFar - zNear),
-        0.0                 , 0.0                 , 0.0                  , -1.0
+        0.0                 , 0.0                 , 0.0                  , 1.0
     )
 }
 
