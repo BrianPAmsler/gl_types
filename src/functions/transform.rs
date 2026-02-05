@@ -9,10 +9,6 @@ pub fn lookAt(eye: Vec3, center: Vec3, up: Vec3) -> Mat4 {
     let right = normalize(cross(back, up));
     let up = cross(right, back);
 
-    println!("back: {:?}", back);
-    println!("right: {:?}", right);
-    println!("up: {:?}", up);
-
     let [rx, ry, rz] = right.0.data.0[0];
     let [fx, fy, fz] = back.0.data.0[0];
     let [ux, uy, uz] = up.0.data.0[0];
